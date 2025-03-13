@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
+import Login from './components/Login';
+import Register from './components/Register';
 
-function App() {
+function Generator() {
   const [prompt, setPrompt] = useState('');
   const [htmlCode, setHtmlCode] = useState('');
   const [cssCode, setCssCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('html');
   const [copyMessage, setCopyMessage] = useState('Copy Code');
+  const navigate = useNavigate();
 
   const generateCode = async () => {
     if (!prompt.trim()) {
@@ -24,9 +28,18 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({ prompt: prompt }),
       });
+
+      if (response.status === 401) {
+        // Unauthorized - token expired or invalid
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        navigate('/login');
+        return;
+      }
 
       const data = await response.json();
 
@@ -69,11 +82,6 @@ function App() {
 
   return (
     <div className="container">
-      <header>
-        <h1>AI HTML/CSS Generator</h1>
-        <p className="header-subtitle">Transform your ideas into beautiful code in seconds</p>
-      </header>
-      
       <div className="main">
         <div className="input-section">
           <h2 className="section-title">Design Your Vision</h2>
@@ -164,6 +172,68 @@ function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  return user ? children : <Navigate to="/login" />;
+};
+
+function App() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const loggedInUser = localStorage.getItem('user');
+    if (loggedInUser) {
+      setUser(JSON.parse(loggedInUser));
+    }
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  return (
+    <Router>
+      <div>
+        <header>
+          <h1>AI HTML/CSS Generator</h1>
+          <p className="header-subtitle">Transform your ideas into beautiful code in seconds</p>
+          {user && (
+            <div className="user-menu">
+              <span className="user-name">Welcome, {user.name}</span>
+              <button onClick={handleLogout} className="button-secondary logout-button">Logout</button>
+            </div>
+          )}
+        </header>
+        
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              user ? (
+                <ProtectedRoute>
+                  <Generator />
+                </ProtectedRoute>
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
