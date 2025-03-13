@@ -31,6 +31,7 @@ function Login({ onLogin }) {
 
       // Store user info in localStorage for persistence
       localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.setItem('token', data.token);
       
       // Call the onLogin callback with user data
       onLogin(data.user);

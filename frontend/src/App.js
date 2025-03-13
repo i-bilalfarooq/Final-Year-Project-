@@ -187,8 +187,13 @@ function App() {
   useEffect(() => {
     // Check if user is logged in
     const loggedInUser = localStorage.getItem('user');
-    if (loggedInUser) {
+    const token = localStorage.getItem('token');
+    if (loggedInUser && token) {
       setUser(JSON.parse(loggedInUser));
+    } else {
+      // Clear any partial data if one of them is missing
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
     }
   }, []);
 
