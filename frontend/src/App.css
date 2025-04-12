@@ -53,10 +53,10 @@ h1 {
 }
 
 .main {
-  display: flex;
-  flex-direction: column;
+  display: block;
   gap: 25px;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 @media (min-width: 768px) {
@@ -65,7 +65,18 @@ h1 {
   }
 }
 
+.columns-container {
+  display: flex;
+  gap: 25px;
+  height: 65vh; /* Fixed height container */
+  min-height: 500px;
+  overflow: hidden; /* Prevent content from expanding parent */
+}
+
 .input-section {
+  position: relative;
+  min-height: 400px; /* Fixed minimum height */
+  padding-bottom: 80px;
   flex: 1;
   background-color: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
@@ -76,6 +87,7 @@ h1 {
   border: 1px solid rgba(212, 175, 55, 0.2);
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 }
 
 .input-section:hover {
@@ -108,7 +120,6 @@ h1 {
 .output-header {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
   border-bottom: 1px solid rgba(212, 175, 55, 0.3);
 }
 
@@ -201,8 +212,7 @@ h1 {
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
   transition: all 0.3s ease;
   border: 1px solid rgba(212, 175, 55, 0.2);
-  min-height: 500px;
-  display: none;
+  min-height: 600px;
 }
 
 .preview-header {
@@ -256,7 +266,7 @@ textarea:focus {
   overflow: hidden;
   width: auto;
   align-self: flex-start;
-  margin-top: auto;
+  overflow-y: auto;
 }
 
 .button-primary:hover {
