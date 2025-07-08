@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend integration
 
 # Configure Google Gemini API
-GOOGLE_API_KEY = "AIzaSyBhZnViNVtXqC7Jszlnva2we1SXvwLr1G4"  # Replace this with your actual API key
+GOOGLE_API_KEY = "AIzaSyBhZnViNVtXqC7Jszlnva2we1SXvwLr1G4"
 genai.configure(api_key=GOOGLE_API_KEY)
 
 @app.route('/generate', methods=['POST'])
